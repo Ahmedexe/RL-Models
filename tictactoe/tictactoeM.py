@@ -2,19 +2,20 @@ import torch.nn as nn
 import torch
 import random
 import numpy as np
-import torch.optim
+import torch.optim as  optim
 from env import TicTacToe
 
 
 stateSize = 3**9
 actionSize = 9
-bufferSize = 2000
+bufferSize = 8000
 batchSize = 32
 gamma = 0.95
 epsilon = 1.
 epsilonDecay = 0.995
 alpha = 0.003
-episodes = 250
+episodes = 350
+targetupdate = 128
 
 
 class QNN(nn.Module):
@@ -30,15 +31,36 @@ class QNN(nn.Module):
         return self.fc3(x)
 
 
-env = TicTacToe("1")
+
+env = TicTacToe()
 state = env.reset()
 
-board, reward, done = env.play(state, 2)
-print(board, reward, done)
+policyNN = QNN(stateSize, actionSize)
+targetNN = QNN(stateSize, actionSize)
+targetNN.load_state_dict(policyNN.state_dict())
+targetNN.eval()
 
-board, reward, done = env.play(state, 4)
-print(board, reward, done)
+optimizer = optim.Adam(policyNN.parameters(), lr=alpha)
 
-board, reward, done = env.play(state, 6)
-print(board, reward, done)
 
+for episode in range(episodes):
+
+    if episode % targetupdate == 0:
+        targetNN.load_state_dict(policyNN.state_dict())
+
+    state = env.reset()
+    totalReward = 0
+    done = False
+
+    while not done:
+
+        # Epsilon greedy Exploration..
+        if random.random() < epsilon:
+            action = str(random.randint(0, 8))
+
+        else:
+            stateTensor = torch.tensor([float(x) for x in state])
+            action = torch.argmax(policyNN(stateTensor)).item()
+
+
+        ## Take Action ----> To Be Conti.

@@ -2,13 +2,13 @@ import copy
 
 
 class TicTacToe:
-    def __init__(self, player):
+    def __init__(self):
         self.state = ["0","0","0","0","0","0","0","0","0"]
-        self.player = player
 
-    def play(self, state, action):
+    def play(self, state, action, player):
         prevState = copy.deepcopy(state)
-        state[action] = self.player
+        if state[action] == "0":
+            state[action] = player
         reward = rewardCalc(prevState, state, action)
         done = isWon(state)
 
