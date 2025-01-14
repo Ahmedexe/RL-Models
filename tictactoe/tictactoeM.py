@@ -3,7 +3,8 @@ import torch
 import random
 import numpy as np
 import torch.optim
-import fun
+from env import TicTacToe
+
 
 stateSize = 3**9
 actionSize = 9
@@ -14,8 +15,6 @@ epsilon = 1.
 epsilonDecay = 0.995
 alpha = 0.003
 episodes = 250
-
-fun.winPos(2)
 
 
 class QNN(nn.Module):
@@ -29,3 +28,17 @@ class QNN(nn.Module):
         x = torch.relu(self.fc1(x))
         x = torch.relu(self.fc2(x))
         return self.fc3(x)
+
+
+env = TicTacToe("1")
+state = env.reset()
+
+board, reward, done = env.play(state, 2)
+print(board, reward, done)
+
+board, reward, done = env.play(state, 4)
+print(board, reward, done)
+
+board, reward, done = env.play(state, 6)
+print(board, reward, done)
+
