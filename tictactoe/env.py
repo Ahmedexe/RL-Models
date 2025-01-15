@@ -34,7 +34,7 @@ def rewardCalc(prevState, nextState, action):
     elif isWon(nextState):
         reward = 10
     else:
-        reward = 0
+        reward = -1
 
     return reward
 

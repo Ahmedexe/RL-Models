@@ -9,14 +9,14 @@ import copy
 
 stateSize = 9
 actionSize = 9
-bufferSize = 2000
-batchSize = 64
-gamma = 0.95
+bufferSize = 8000
+batchSize = 128
+gamma = 0.975
 epsilon = 1.
-epsilonDecay = 0.875
-alpha = 0.001
-episodes = 10000
-targetupdate = 256
+epsilonDecay = 0.975
+alpha = 0.002
+episodes = 100000
+targetupdate = 512
 experiences = []
 
 
@@ -59,7 +59,7 @@ for episode in range(episodes):
     while not done:
 
         # Epsilon greedy Exploration..
-        if random.random() < epsilon:
+        if np.random.rand() < epsilon:
             random.seed(0)
             action = np.random.randint(8)
 
@@ -110,3 +110,21 @@ for episode in range(episodes):
         epsilon = max(0.1, epsilonDecay * epsilon)
 
         print(f"Episode {episode + 1}: Total Reward = {totalReward}")
+
+
+for test in range(3):
+
+    done = False
+    state = env.reset()
+
+    while not done:
+        stateTensor = torch.tensor(state, dtype=torch.float32)
+        with torch.no_grad():
+            action = int(torch.argmax(policyNN(stateTensor)).item())
+
+        state, nextState, reward, done = env.play(action, 1)
+
+        env.print()
+        if not done:
+            action = int(input("enter your action: "))
+            state, nextState, reward, done = env.play(action, 2)
