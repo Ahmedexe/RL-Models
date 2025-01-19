@@ -1,5 +1,6 @@
 import copy
 import numpy as np
+from random import sample
 
 
 class TicTacToe:
@@ -17,9 +18,9 @@ class TicTacToe:
 
         return prevState, next, reward, done
 
-    def reset(self):
+    def reset(self, player):
         self.state = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-        self.state[np.random.randint(8)] = np.random.randint(8)
+        # self.state[np.random.randint(8)] = float(sample([0, player], 1)[0])
         return self.state
 
     def print(self):

@@ -10,13 +10,13 @@ import copy
 stateSize = 9
 actionSize = 9
 bufferSize = 8000
-batchSize = 128
-gamma = 0.975
+batchSize = 64
+gamma = 0.95
 epsilon = 1.
-epsilonDecay = 0.999
+epsilonDecay = 0.995
 alpha = 0.002
-episodes = 200000
-targetupdate = 512
+episodes = 20000
+targetupdate = 256
 experiences = []
 
 
@@ -34,7 +34,7 @@ class QNN(nn.Module):
 
 
 env = TicTacToe()
-state = env.reset()
+state = env.reset(0)
 
 policyNN = QNN(stateSize, actionSize)
 targetNN = QNN(stateSize, actionSize)
@@ -49,7 +49,7 @@ for episode in range(episodes):
     if episode % targetupdate == 0:
         targetNN.load_state_dict(policyNN.state_dict())
 
-    state = env.reset()
+    state = env.reset(0)
     totalReward = 0
     done = False
 
@@ -80,8 +80,10 @@ for episode in range(episodes):
             # while partialReward < 1:
             #     _, state, partialReward, done = env.play(
             #         random.randint(0, 8), 2)
-            _, state, _, done = env.play(
+            state, nextState, reward, done = env.play(
                 int(torch.argmax(policyNN(stateTensor)).item()), 2)
+            experiences.append((state, action, reward, nextState, done))
+            state = copy.deepcopy(nextState)
 
         if len(experiences) >= batchSize:
             expSample = random.sample(experiences, batchSize)
@@ -115,7 +117,7 @@ for episode in range(episodes):
 for test in range(3):
 
     done = False
-    state = env.reset()
+    state = env.reset(0)
 
     while not done:
         stateTensor = torch.tensor(state, dtype=torch.float32)
