@@ -1,4 +1,5 @@
 import copy
+import numpy as np
 
 
 class TicTacToe:
@@ -10,7 +11,7 @@ class TicTacToe:
         if self.state[action] == 0:
             self.state[action] = player
         reward = rewardCalc(prevState, self.state, action)
-        done = isWon(self.state)
+        done = isDone(self.state)
 
         next = copy.deepcopy(self.state)
 
@@ -18,6 +19,7 @@ class TicTacToe:
 
     def reset(self):
         self.state = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.state[np.random.randint(8)] = np.random.randint(8)
         return self.state
 
     def print(self):
@@ -31,7 +33,7 @@ def rewardCalc(prevState, nextState, action):
 
     if prevState[action] != 0:
         reward = -10
-    elif isWon(nextState):
+    elif isDone(nextState):
         reward = 10
     else:
         reward = -1
@@ -39,7 +41,7 @@ def rewardCalc(prevState, nextState, action):
     return reward
 
 
-def isWon(state):
+def isDone(state):
 
     # check rows
     for i in range(3):
@@ -55,4 +57,9 @@ def isWon(state):
     if state[2] == state[4] == state[6] != 0:
         return 1
 
-    return 0
+    flag = 1
+    for k in range(9):
+        if (state[k] == 0):
+            flag = 0
+
+    return flag

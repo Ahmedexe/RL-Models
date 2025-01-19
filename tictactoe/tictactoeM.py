@@ -13,9 +13,9 @@ bufferSize = 8000
 batchSize = 128
 gamma = 0.975
 epsilon = 1.
-epsilonDecay = 0.975
+epsilonDecay = 0.999
 alpha = 0.002
-episodes = 100000
+episodes = 200000
 targetupdate = 512
 experiences = []
 
@@ -60,7 +60,6 @@ for episode in range(episodes):
 
         # Epsilon greedy Exploration..
         if np.random.rand() < epsilon:
-            random.seed(0)
             action = np.random.randint(8)
 
         else:
@@ -81,7 +80,8 @@ for episode in range(episodes):
             # while partialReward < 1:
             #     _, state, partialReward, done = env.play(
             #         random.randint(0, 8), 2)
-            _, state, _, done = env.play(random.randint(0, 8), 2)
+            _, state, _, done = env.play(
+                int(torch.argmax(policyNN(stateTensor)).item()), 2)
 
         if len(experiences) >= batchSize:
             expSample = random.sample(experiences, batchSize)
