@@ -23,7 +23,7 @@ class TicTacToe:
     def print(self):
         for i in range(3):
             for j in range(3):
-                print(self.state[j + 3*i])
+                print(self.state[j + 3*i], end=' ')
             print()
 
 
