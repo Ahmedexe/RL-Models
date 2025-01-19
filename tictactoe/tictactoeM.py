@@ -6,15 +6,16 @@ import torch.optim as optim
 from env import TicTacToe
 import copy
 
+np.random.seed(77)
 
 stateSize = 9
 actionSize = 9
 bufferSize = 8000
 batchSize = 64
-gamma = 0.95
+gamma = 0.9
 epsilon = 1.
 epsilonDecay = 0.995
-alpha = 0.002
+alpha = 0.001
 episodes = 20000
 targetupdate = 256
 experiences = []
@@ -80,10 +81,8 @@ for episode in range(episodes):
             # while partialReward < 1:
             #     _, state, partialReward, done = env.play(
             #         random.randint(0, 8), 2)
-            state, nextState, reward, done = env.play(
+            _, state, _, done = env.play(
                 int(torch.argmax(policyNN(stateTensor)).item()), 2)
-            experiences.append((state, action, reward, nextState, done))
-            state = copy.deepcopy(nextState)
 
         if len(experiences) >= batchSize:
             expSample = random.sample(experiences, batchSize)
@@ -113,6 +112,8 @@ for episode in range(episodes):
 
         print(f"Episode {episode + 1}: Total Reward = {totalReward}")
 
+
+torch.save(policyNN.state_dict(), "tictactoeM.pth")
 
 for test in range(3):
 
