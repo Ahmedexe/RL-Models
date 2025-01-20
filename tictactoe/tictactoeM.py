@@ -6,7 +6,7 @@ import torch.optim as optim
 from env import TicTacToe
 import copy
 
-np.random.seed(77)
+np.random.seed(42)
 
 stateSize = 9
 actionSize = 9
