@@ -22,7 +22,7 @@ class TicTacToe:
 
     def reset(self, player):
         self.state = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-        # self.state[np.random.randint(8)] = float(sample([0, player], 1)[0])
+        self.state[np.random.randint(8)] = int(sample([0, player], 1)[0])
         return self.state
 
     def print(self):
@@ -30,6 +30,12 @@ class TicTacToe:
             for j in range(3):
                 print(self.state[j + 3*i], end=" ")
             print()
+
+    def playValidMove(self, player):
+        for k in range(9):
+            if (self.state[k] == 0):
+                self.state[k] = player
+                return self.state
 
 
 def rewardCalc(prevState, nextState, action):
